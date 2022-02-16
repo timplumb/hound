@@ -55,6 +55,12 @@ if ((string) $temppass === HOUND_PASS) {
                 );
                 if (writeParam($arrayvalue, $file)) {
                     echo '<div class="thin-ui-notification thin-ui-notification-success">Changes saved successfully.</div>';
+					?>
+<script type="text/javascript">
+const myTimeout = setTimeout(redirectToMenu, 3000);
+function redirectToMenu(){ window.location = "content.php?type=<?php echo($type); ?>"; }
+</script>
+                    <?php
                 } else {
                     echo '<div class="thin-ui-notification thin-ui-notification-error">An error occurred while saving changes.</div>';
                 }
@@ -92,14 +98,20 @@ if ((string) $temppass === HOUND_PASS) {
                         <select name="template" id="template">
                             <?php
                             $dirtmpl = scandir('../../content/site/templates/' . $param['template'] . '/');
+
                             foreach ($dirtmpl as $itemtpl) {
-                                if (!is_dir("../../content/site/templates/".$param['template']."/".$itemtpl) && $itemtpl!="." && $itemtpl!=".." && $itemtpl!=".DS_Store") {
+
+                            	$baseName = basename($itemtpl,".php");
+                            	$ext = pathinfo($itemtpl, PATHINFO_EXTENSION);
+
+                                if (!is_dir("../../content/site/templates/".$param['template']."/".$itemtpl) && $itemtpl!="." && $itemtpl!=".." && $itemtpl!=".DS_Store" && $ext === "php") {
+
                                     if ($itemtpl == $paramofpage['template']) {
                                         $sel2="selected";
                                     } else {
                                         $sel2="";
                                     }
-                                    echo"<option $sel2 value=\"$itemtpl\">$itemtpl</option>";
+                                    echo"<option $sel2 value=\"$itemtpl\">$baseName</option>";
                                 }
                             }
                             ?>
@@ -109,6 +121,7 @@ if ((string) $temppass === HOUND_PASS) {
 
                 <p>
                     <button type="submit" class="thin-ui-button thin-ui-button-primary">Create <?php echo $type; ?></button>
+                    <a href="content.php?type=<?php echo $type; ?>" class="thin-ui-button thin-ui-button-secondary">Cancel</a>
                 </p>
             </form>
         </div>

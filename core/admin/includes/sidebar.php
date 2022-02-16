@@ -9,6 +9,7 @@
         <li class="sidebar-separator"></li>
         <li><a href="content.php?type=post">Posts</a></li>
         <li><a href="content.php?type=page">Pages</a></li>
+        <li><a href="block.php">Blocks</a></li>
         <li><a href="menu.php">Menu</a></li>
         <li><a href="media.php">Media</a></li>
 

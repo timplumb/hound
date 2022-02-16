@@ -46,6 +46,12 @@ include 'includes/sidebar.php';
 
             if (writeParam($arrayvalue, $file)) {
                 echo '<div class="thin-ui-notification thin-ui-notification-success">Changes saved successfully.</div>';
+                echo <<< EOL
+<script type="text/javascript">
+const myTimeout = setTimeout(redirectToMenu, 3000);
+function redirectToMenu(){ window.location = "content.php?type=$type"; }
+</script>
+EOL;
             } else {
                 echo '<div class="thin-ui-notification thin-ui-notification-error">An error occurred while saving changes.</div>';
             }
@@ -88,12 +94,16 @@ include 'includes/sidebar.php';
                         <?php
                         $dirtmpl = scandir('../../content/site/templates/' . $param['template'] . '/');
                         foreach ($dirtmpl as $itemtpl) {
-                            if (!is_dir('../../content/site/templates/' . $param['template'] . '/' . $itemtpl) && $itemtpl != '.' && $itemtpl != '..' && $itemtpl != '.DS_Store') {
+
+                        	$baseName = basename($itemtpl,".php");
+                            $ext = pathinfo($itemtpl, PATHINFO_EXTENSION);
+
+                            if (!is_dir('../../content/site/templates/' . $param['template'] . '/' . $itemtpl) && $itemtpl != '.' && $itemtpl != '..' && $itemtpl != '.DS_Store' && $ext === "php") {
                                 if ($itemtpl == $paramofpage['template'])
                                     $sel2 = 'selected';
                                 else
                                     $sel2 = '';
-                                echo '<option ' . $sel2 . ' value="' . $itemtpl . '">' . $itemtpl . '</option>';
+                                echo '<option ' . $sel2 . ' value="' . $itemtpl . '">' . $baseName . '</option>';
                             }
                         }
                         ?>

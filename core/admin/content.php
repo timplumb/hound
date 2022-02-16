@@ -16,6 +16,7 @@ if ((string) $temppass === HOUND_PASS) {
     include 'includes/header.php';
     include 'includes/sidebar.php'; ?>
 
+
     <div class="content">
         <div class="content main">
             <?php
@@ -33,6 +34,12 @@ if ((string) $temppass === HOUND_PASS) {
 
                 if (unlink($file)) {
                     echo '<div class="thin-ui-notification thin-ui-notification-success">' . ucwords($type) . ' deleted successfully.</div>';
+                    ?>
+<script type="text/javascript">
+const myTimeout = setTimeout(redirectToMenu, 3000);
+function redirectToMenu(){ window.location = "content.php?type=<?php echo($type); ?>"; }
+</script>
+                    <?php
                 } else {
                     echo '<div class="thin-ui-notification thin-ui-notification-error">An error occurred while deleting ' . $type . '.</div>';
                 }
@@ -42,12 +49,18 @@ if ((string) $temppass === HOUND_PASS) {
 
                 if (copy($file, $filecopy)) {
                     echo '<div class="thin-ui-notification thin-ui-notification-success">' . ucwords($type) . ' copied successfully.</div>';
+                    ?>
+<script type="text/javascript">
+const myTimeout = setTimeout(redirectToMenu, 3000);
+function redirectToMenu(){ window.location = "content.php?type=<?php echo($type); ?>"; }
+</script>
+                    <?php
                 } else {
                     echo '<div class="thin-ui-notification thin-ui-notification-error">An error occurred while copying ' . $type . '.</div>';
                 }
             }
             ?>
-            <h2>Content</h2>
+            <h2><?php echo( ucfirst($type). "s" ); ?></h2>
             <div>
                 <a href="new.php?type=<?php echo $type; ?>" class="thin-ui-button thin-ui-button-primary">New <?php echo $type; ?></a>
             </div>
@@ -73,13 +86,18 @@ if ((string) $temppass === HOUND_PASS) {
                             //$listofpage[$i]['url'] = $parampage['url'];
                             //$listofpage[$i]['slug'] = $parampage['slug'];
                             $nameofpage = str_replace('../../content/site/pages/', "", $file);
-                            $nameofpage = str_replace($type . '-', "", $nameofpage);
+
+                            //revove the post- or page- prefix only from the start of the file name
+							if (substr($nameofpage, 0, strlen($type)) == $type) {
+								$nameofpage = substr($nameofpage, strlen($type)+1);
+							}
+
+                            //$nameofpage = str_replace($type . '-', "", $nameofpage);
                             $nameofpage = str_replace('.txt', "", $nameofpage);
-                            //$i++;
 
                             $fileinfo = stat($file);
                             echo '<tr>
-                                <td>';
+                                <td data-label="Title">';
                                     if ($parampage['slug'] == "index") {
                                         echo '<i class="fa fa-fw fa-home" aria-hidden="true"></i> ';
                                     }
@@ -91,10 +109,10 @@ if ((string) $temppass === HOUND_PASS) {
                                         echo ' (copy)';
                                     }
                                 echo '</td>';
-                                echo '<td>' . $parampage['slug'] . '</td>';
-                                echo '<td><code>' . str_replace('.php', '', $parampage['template']) . '</code></td>';
-                                echo '<td><small>' . date('F d Y H:i:s', filemtime($file)) . ' <code>' . formatSizeUnits($fileinfo['size']) . '</code></small></td>';
-                                echo '<td>
+                                echo '<td data-label="Slug">' . $parampage['slug'] . '</td>';
+                                echo '<td data-label="Template"><code>' . str_replace('.php', '', $parampage['template']) . '</code></td>';
+                                echo '<td data-label="File Details"><small>' . date('F d Y H:i:s', filemtime($file)) . ' <code>' . formatSizeUnits($fileinfo['size']) . '</code></small></td>';
+                                echo '<td data-label="Action">
                                     <a href="../../' . $parampage['slug'] . '">View</a> | ';
                                     if ($parampage['slug'] != 'index') {
                                         echo '<a href="content.php?type=' . $type . '&op=copy&which=' . $nameofpage . '"> Clone</a> | ';

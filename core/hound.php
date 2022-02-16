@@ -26,10 +26,10 @@ function hound_count_content($type) {
 
 /**
  * Get configuration parameter
- * 
+ *
  * @since 0.1.4
  * @author Ciprian Popescu
- * 
+ *
  * @param string $name Name of parameter from configuration file
  * @return string
  */
@@ -197,13 +197,29 @@ function hound_init() {
     /**
      * Get current page
      */
+    //Hound can't support pages in folders. Add support for folders.
     $currentPageSlug = strtok(basename($_SERVER['REQUEST_URI']), '?');
+
+	$url_parts = parse_url($_SERVER['REQUEST_URI']);
+	$urlPath = ($url_parts['path']);
+	$requestedPath = "";
+
+	if (substr($urlPath, 0, strlen(HOUND_PATH)) == HOUND_PATH) {
+		//strip the root (hound path) from the requested URL
+    	$requestedPath = substr($urlPath, strlen(HOUND_PATH));
+	}
+
+	if ($requestedPath == ""){
+		//if the path is empty then show the home (index) page
+		$currentPageSlug = "index";
+	}
 
     /**
      * Load files in /content/pages/
      */
     $i = 0;
     $fileindir = hound_get_files('content/site/pages/');
+
     foreach ($fileindir as $file) {
         if (preg_match("/\bpage\b/i", $file)) {
             $listofpage[] = str_replace('content/site/pages/', '', $file);
@@ -221,15 +237,24 @@ function hound_init() {
         }
     }
 
+	//echo($requestedPath);
+
     /**
      * Read file content
      */
+
     if (in_array('page-' . $currentPageSlug . '.txt', $listofpage)) {
         $pageparam = hound_read_parameter('content/site/pages/page-' . $currentPageSlug . '.txt');
     } else if (in_array('post-' . $currentPageSlug . '.txt', $listofpage)) {
         $pageparam = hound_read_parameter('content/site/pages/post-' . $currentPageSlug . '.txt');
     } else {
-        $pageparam = hound_read_parameter('content/site/pages/page-index.txt');
+    	//does the 404 page exist on the server?
+    	if (file_exists('content/site/pages/page-404.txt')){
+    		header('HTTP/1.1 404 Not Found');
+    		$pageparam = hound_read_parameter('content/site/pages/page-404.txt');
+    	} else {
+        	$pageparam = hound_read_parameter('content/site/pages/page-index.txt');
+    	}
     }
 
     /**
@@ -255,8 +280,8 @@ function hound_init() {
     $pageparam['content'] = hook('content', $pageparam['content']);
 
     $layout->set('content', $pageparam['content']);
-    $layout->set('menu', $menuitems);  
-    $layout->set('urlwebsite', HOUND_URL); 
+    $layout->set('menu', $menuitems);
+    $layout->set('urlwebsite', HOUND_URL);
     $layout->set('site.title', $config['title']);
 
     $layout->set('slug', $pageparam['slug']);

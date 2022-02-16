@@ -11,15 +11,17 @@ function houndSlugify(title, slug) {
     slugElement.value = titleElement;
 }
 
+
 function sortTable(table, order) {
     var asc = order === 'asc',
         tbody = table.find('tbody');
 
     tbody.find('tr').sort(function(a, b) {
+    	var a = $(a).find('td:first').text(), b = $(b).find('td:first').text();
         if (asc) {
-            return $('td:first', a).text().localeCompare($('td:first', b).text());
+  			return a.localeCompare(b, false, {numeric: true});
         } else {
-            return $('td:first', b).text().localeCompare($('td:first', a).text());
+            return b.localeCompare(a, false, {numeric: true});
         }
     }).appendTo(tbody);
 }

@@ -24,7 +24,8 @@ include 'includes/sidebar.php';
 
         if (isset($_POST['op']) && (string) $_POST['op'] === 'insx') {
             $filename = basename($_FILES['foto1']['name']);
-            $uploadfile = $folder . $ante . $_FILES['foto1']['name'];
+            //$uploadfile = $folder . $ante . $_FILES['foto1']['name'];
+			$uploadfile = $folder . $_FILES['foto1']['name'];
 
             if (move_uploaded_file($_FILES['foto1']['tmp_name'], $uploadfile)) {
                 // success
@@ -88,24 +89,30 @@ include 'includes/sidebar.php';
                     $ext = pathinfo($files[$s], PATHINFO_EXTENSION);
                     $fileinfo = stat($files[$s]);
                     $fileName = str_replace('../content/files/images/', '', $files[$s]);
+					$baseName = basename($files[$s]);
+					$fileRef = basename($files[$s],'.'.$ext);
 
                     if ($fileName !== 'index.php') {
-                        echo '<tr>';
+                        echo '<tr>'.PHP_EOL;
                             if ((string) $ext === 'jpg' || (string) $ext === 'jpeg' || (string) $ext === 'png' || (string) $ext === 'gif') {
-                                echo '<td><img src="' . $files[$s] . '" alt="" height="40"></td>';
+                                echo '<td data-label="Thumbnail"><img src="' . $files[$s] . '" alt="" height="40"></td>'.PHP_EOL;
                             } else {
-                                echo '<td></td>';
+                                echo '<td></td>.PHP_EOL';
                             }
-                            echo '<td>
-                                ' . $fileName . '
-                                <br><code>' . $files[$s] . '</code>
+                            echo '<td data-label="Media">' . $baseName . '
+                            	<br><code>' . $files[$s] . '</code>
                                 </td>
-                                <td><small>' . date('F d Y H:i:s', filemtime($files[$s])) . ' <code>' . formatSizeUnits($fileinfo['size']) . '</code></small></td>
-                                <td>
-                                    <a href="' . $files[$s] . '" target="_blank">View</a> | 
+                                <td data-label="Details"><small>' . date('F d Y H:i:s', filemtime($files[$s])) . ' <code>' . formatSizeUnits($fileinfo['size']) . '</code></small></td>
+                                <td data-label="Action">
+                                    <!-- <a href="' . $files[$s] . '" target="_blank">View</a> -->
+                                    <a href="#' . $fileRef . '">View</a> |
                                     <a style="color: red;" onclick="return confirm(\'are you sure?\');" href="media.php?op=del&file=' . $files[$s] . '">Delete</a>
+                                	<!-- lightbox container hidden with CSS -->
+									<a href="#" class="lightbox" id="'.$fileRef.'">
+									  <span style="background-image: url(\''.$files[$s].'\')"></span>
+									</a>
                                 </td>
-                            </tr>';
+                            </tr>'.PHP_EOL;
                     }
 
                     $s++;
@@ -130,24 +137,32 @@ include 'includes/sidebar.php';
             $ep -= $perpagina;
         }
 
+		$prevDisabled = "";
         if ($sp < 0 ) {
-            $prev = "&nbsp;";
-        } else {
-            $prev = "<a class=\"btn btn-default\" href=".$PHP_SELF."?s=".$sp."&e=".$ep."> previous page</a>";
+            $prevDisabled = " disabled";
         }
 
+		$nextDisabled = "";
         if ($sn > $st ) {
-            $next = "&nbsp;";
-        } else {
-            $next = "<a class=\"btn btn-default\" href=".$PHP_SELF."?s=".$sn."&e=".$en."&pv=1> next page </a>";
+            $nextDisabled = " disabled";
         }
 
-        echo '<p>' . $prev . ' | ' . $next . '</p>';
+        $prev = "<a class=\"thin-ui-button thin-ui-button-primary".$prevDisabled."\" href=".$_SERVER['PHP_SELF']."?s=".$sp."&e=".$ep.">previous page</a>";
+        $next = "<a class=\"thin-ui-button thin-ui-button-primary".$nextDisabled."\" href=".$_SERVER['PHP_SELF']."?s=".$sn."&e=".$en."&pv=1>next page</a>";
+
+        $seperator = "";
+        /*
+        if ( ($sp >= 0) && ($sn <= $st) ){
+        	$seperator = " | ";
+        }
+        */
+
+        echo '<p>' . $prev . $seperator . $next . '</p>';
         ?>
 
         <h4>Upload new image</h4>
         <form action="media.php" method="post" enctype="multipart/form-data">
-            <input type="hidden" name="op" value="insx"> 
+            <input type="hidden" name="op" value="insx">
             <input type="file" name="foto1">
             <br><input type="submit" class="thin-ui-button thin-ui-button-secondary" value="Upload">
         </form>

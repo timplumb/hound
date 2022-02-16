@@ -15,7 +15,7 @@ if ((string) $temppass === HOUND_PASS) {
         <div class="content main">
 
           <?php
-          if($_POST['op']=="mod"){
+          if(isset($_POST['op']) && ($_POST['op']=="mod")){
 
                 $order=$_POST['order'];
                 $item=$_POST['item'];
@@ -35,15 +35,21 @@ if ((string) $temppass === HOUND_PASS) {
                 );
                 if (writeParam($arrayvalue, $file)) {
                     echo '<div class="thin-ui-notification thin-ui-notification-success">Changes saved successfully.</div>';
+                    ?>
+<script type="text/javascript">
+const myTimeout = setTimeout(redirectToMenu, 3000);
+function redirectToMenu(){ window.location = "menu.php"; }
+</script>
+                    <?php
                 } else {
                     echo '<div class="thin-ui-notification thin-ui-notification-error">An error occurred while saving changes.</div>';
                 }
           }
           ?>
 
-
-          <br>
-
+          <h2>New menu</h2>
+<?php
+/*
           <form role="form" name="form1" id="form1" action="new-menu.php" method="post">
           <input type="hidden" value="mod" name="op">
 
@@ -71,9 +77,37 @@ if ((string) $temppass === HOUND_PASS) {
 
           <br>
 
-          <button type="submit" class="btn btn-lg btn-success">Create menu item</button> or <u><a href="pages.php">Cancel</a></u>
+          <button type="submit" class="thin-ui-button thin-ui-button-primary">Create menu item</button> or <u><a href="pages.php" class="thin-ui-button thin-ui-button-secondary">Cancel</a></u>
           </form>
+*/
+?>
 
+<form role="form" id="form1" action="new-menu.php" method="post">
+                <input type="hidden" value="mod" name="op">
+
+                <p>
+                    <b>Menu item</b><br>
+                    <input name="item" value="" type="text" class="thin-ui-input" size="64" required>
+                    <br><small>Menu item title</small>
+                </p>
+
+                <p>
+                    <b>Menu item link</b><br>
+                    <input name="link" value="" type="url" class="thin-ui-input" size="64" required>
+                    <br><small>Page link (absolute URI)</small>
+                </p>
+
+                <p>
+                    <b>Order</b><br>
+                    <input name="order" value="" type="number" min="0" class="thin-ui-input" required>
+                    <br><small>Order of item in menu</small>
+                </p>
+
+                <p>
+                	<button type="submit" class="thin-ui-button thin-ui-button-primary">Save Changes</button>
+                	<a href="menu.php" class="thin-ui-button thin-ui-button-secondary">Cancel</a>
+                </p>
+            </form>
 
       </div> <!-- container-fluid -->
 

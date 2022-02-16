@@ -4,6 +4,15 @@
 * TODO: AJAX
 * TODO: Better check_login function
 * TODO: Update FontAwesome
+* TODO: Update menus from individual menu items to menus and their respective menu items (children) so we can define multiple menus
+* TODO: Add support for simple hooks to allow code to be injected into parts of the page on output
+
+= 0.8.5 =
+* UPDATE: Added a new custom.css stylesheet to admin/css
+* UPDATE: Added new blocks (page parts) and menu data types to the CMS
+* UPDATE: Updated UI to make the layout responsive and the table view workable on smaller screens
+* UPDATE: Changes the user flow slightly so users are returned to the correct admin page after performing certain functions
+* UPDATE: Added a first draft of a simple image lightbox to the media section
 
 = 0.8.4 =
 * UPDATE: Changed path detection for performance
