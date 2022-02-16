@@ -13,7 +13,7 @@ define('HOUND_PASS', '123456');
 /**
  * Stop editing! Have fun!
  */
-define('HOUND_VERSION', '0.8.4');
+define('HOUND_VERSION', '0.8.5');
 
 include 'plugins.php';
 include 'hound.php';
